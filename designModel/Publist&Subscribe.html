@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<script type="text/javascript">
+
+		var event = {
+
+			clientList: [],
+
+			listen(key, fn) {
+				if(!this.clientList[key]) {
+					this.clientList[key] = [];
+				}
+				this.clientList[key].push(fn);
+			},
+
+			trigger() {
+				var key = Array.prototype.shift.call(arguments);
+				var fns = this.clientList[key];
+
+				if(!fns || fns.length === 0) {
+					return;
+				}
+
+				for(var i = 0, fn; fn = fns[i++];) {
+					fn.apply(this, arguments);
+				}
+			},
+
+			remove() {
+				// var fns = this.clientList[key];
+				// ...
+				// fns.splice(index, 1);
+			},
+
+		};
+
+		var installEvent = obj => {
+			for(i in event) {
+				obj[i] = event[i];
+			}
+		};
+
+		var salesOffices = {};
+		installEvent(salesOffices);
+
+		salesOffices.listen('squareMeter88', price => {
+			console.log(`Hi,Miss.Hong, You get squareMeter88, Price is ${ price }`);
+		});
+
+		salesOffices.listen('squareMeter120', price => {
+			console.log(`Hi,Miss.Fuck, Price is ${ price }`);
+		});
+
+		salesOffices.listen('squareMeter120', price => {
+			console.log(`Hi,Miss.Ming, Price is ${ price }`);
+		});
+
+		salesOffices.trigger('squareMeter120', 2000000);
+
+
+	</script>
+</body>
+</html>
