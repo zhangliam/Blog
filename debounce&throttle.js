@@ -22,7 +22,6 @@ input2.addEventListener('keyup', function (e) {
 })
 
 
-
 // 截流
 function throttle(func, wait) {
   let timeout;
