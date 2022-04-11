@@ -1,3 +1,4 @@
+// https://github.com/mqyqingfeng/Blog/issues/22
 /* 
 
   防抖: 
@@ -58,6 +59,7 @@ function debounce(fn, wait) {
     }, wait)
   }
 }
+
 
 // container.onmousemove = getUserAction
 container.onmousemove = debounce(getUserAction, 1000)
