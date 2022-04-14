@@ -1,166 +1,151 @@
-// promise实现
+// Promise 
+// https://juejin.cn/post/6860037916622913550
+// https://github.com/YvetteLau/Blog/issues/2
 
-/*
- * 1. new Promise时，需要传递一个 executor 执行器，执行器立刻执行
- * 2. executor 接受两个参数，分别是 resolve 和 reject
- * 3. promise 只能从 pending 到 rejected, 或者从 pending 到 fulfilled
- * 4. promise 的状态一旦确认，就不会再改变
- * 5. promise 都有 then 方法，then 接收两个参数，分别是 promise 成功的回调 onFulfilled, 
- *      和 promise 失败的回调 onRejected
- * 6. 如果调用 then 时，promise已经成功，则执行 onFulfilled，并将promise的值作为参数传递进去。
- *      如果promise已经失败，那么执行 onRejected, 并将 promise 失败的原因作为参数传递进去。
- *      如果promise的状态是pending，需要将onFulfilled和onRejected函数存放起来，等待状态确定后，再依次将对应的函数执行(发布订阅)
- * 7. then 的参数 onFulfilled 和 onRejected 可以缺省
- * 8. promise 可以then多次，promise 的then 方法返回一个 promise
- * 9. 如果 then 返回的是一个结果，那么就会把这个结果作为参数，传递给下一个then的成功的回调(onFulfilled)
- * 10. 如果 then 中抛出了异常，那么就会把这个异常作为参数，传递给下一个then的失败的回调(onRejected)
- * 11.如果 then 返回的是一个promise,那么需要等这个promise，那么会等这个promise执行完，promise如果成功，
- *   就走下一个then的成功，如果失败，就走下一个then的失败
- */
+// 三种状态
+const PENDING = 'PENDING'  // 进行中
+const FULFILLED = 'FULFILLED'  // 已成功
+const REJECTED = 'REJECTED'  // 已失败
 
+class Promise {
 
-const PENDING = 'pending'
-const FULFILLED = 'fulfilled'
-const REJECTED = 'rejected'
+  constructor(executor) {
+    this.status = PENDING
+    this.value = undefined
+    this.reason = undefined
 
+    // 成功态回调函数队列
+    this.onFulfilledCallback = []
+    // 失败态回调函数队列
+    this.onRejectedCallback = []
 
-function Promise(executor) {
-  let self = this
-  self.status = PENDING
-  self.onFulfilled = []
-  self.onRejected = []
-
-  function resolve(value) {
-    if(self.status === PENDING) {
-      self.status = FULFILLED
-      self.value = value
-      self.onFulfilled.forearch((fn) => fn()) 
-    }
-  }
-
-  function reject(reason) {
-    if(self.status === PENDING) {
-      self.status = REJECTED
-      self.reason = reason
-      self.onRejected.forearch((fn) => fn()) 
-    }
-  }
-
-  try {
-    executor(resolve, reject)
-  } catch(e) {
-    reject(e)
-  }
-}
-
-Promise.prototype.then = function(onFulfilled, onRejected) {
-
-  let self = this
-  onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value
-  onRejected = typeof onRejected === 'function' ? onRejected : reason => { throw reason }
-
-  let promise2 = new Promise( (resolve, reject) => {
-
-    if(self.status === FULFILLED) {
-      setTimeout( () => {
-        try {
-          let x = onFulfilled(self.value)
-          resolvePromise(promise2, x, resolve, reject)
-        } catch(e) {
-          reject(e)
-        }
-      })
+    const resolve = value => {
+      // 进行中状态才可改变
+      if(this.status === PENDING) { 
+        this.status = FULFILLED
+        this.value = value
+        // 成功态函数依次执行
+        this.onFulfilledCallback.foreach( fn => fn(this.value) )
+      }
     }
 
-    if(self.status === REJECTED) {
-      setTimeout( () => {
-        try {
-          let x = onRejected(self.reason)
-          resolvePromise(promise2, x, resolve, reject)
-        } catch(e) {
-          reject(e)
-        }
-      })
+    const reject = reason => {
+      // 进行中状态才可改变
+      if(this.status === PENDING) {
+        this.status = REJECTED
+        this.reason = reason
+        // 失败态函数依次执行
+        this.onRejectedCallback.foreach( fn => fn(this.reason) )
+      }
     }
-
-
-    if(self.status === PENDING) {
-      self.onFulfilled.push(() => {
-        setTimeout( () => {
-          try {
-            let x = onFulfilled(self.value)
-            resolvePromise(promise2, x, resolve, reject)
-          } catch(e) {
-            reject(e)
-          }
-        })
-      })
-      self.onRejected.push(() => {
-        setTimeout( () => {
-          try {
-            let x = onRejected(self.reason)
-            resolvePromise(promise2, x, resolve, reject)
-          } catch(e) {
-            reject(e)
-          }
-        })
-      })
-    }
-
-  })
-
-  return promise2
-}
-
-
-function resolvePromise(promise2, x, resolve, reject) {
-  let self = this 
-  if(promise2 === x) {
-    reject(new TypeError('chaining cycle'))
-  }
-
-  if(x && typeof x === 'object' || typeof x === 'function') {
-    let used
 
     try {
-      let then = x.then
-      if(typeof then === 'function') {
-        then.call(x, (y) => {
-          if(used) return
-          used = true
-          resolvePromise(promise2, y, resolve, reject)
-        }, (r) => {
-          if(used) return
-          used = true
-          reject(r)
-        })
-      } else {
-        if(used) return
-        used = true
-        resolve(x)
-      }
-
+      executor(resolve, reject)
     } catch(e) {
-      if (used) return;
-      used = true;
-      reject(e);
+      reject(e)
     }
-
-  } else {
-    resolve(x)
   }
 
+
+  then(onFulfilled, onRejected) {
+    // then是微任务, 使用setTimeou模拟
+    setTimeout(() => {
+
+      if(this.status === PENDING) {
+        // 状态是PENDING下执行
+        // 说明promise内部有异步代码执行，还未改变状态，添加到成功/失败回调任务队列即可
+        this.onFulfilledCallback.push(onFulfilled)
+        this.onRejectedCallback.push(onRejected)
+      }
+
+      if(this.status === FULFILLED) {
+        // FULFILLED状态下执行
+        onFulfilled(this.value)
+      }
+
+      if(this.status === REJECTED) {
+        //REJECTED状态下执行
+        onRejected(this.value)
+      }
+
+    })
+  }
+
+
+  // 实现链式调用 - Promise的一大优势就是支持链式调用，具体来说就是then方法的具体实现，实际上是返回了一个Promise，需要注意的几个点：
+  
+  // 1. 保存之前promise实例的引用，即保存this
+  // 2. 根据then回调函数执行的返回值
+
+  // ~如果是promise实例，那么返回的下一个promise实例会等待这个promise状态发生变化
+  // ~如果不是promise实例，根据目前情况直接执行resolve或reject
+
+
+  // 第二版then
+  then(onFulfilled, onRejected) {
+    // 保存this
+    let _self = this
+    return new Promise( (resolve, reject) => {
+
+      // PENDING
+      if(this.status === PENDING) {
+        this.onFulfilledCallback.push(() => {
+          try {
+            setTimeout(() => {
+              const result = onFulfilled(_self.value)
+              // 分两种情况：
+              // 1. 回调函数返回值是Promise，执行then操作
+              // 2. 如果不是Promise，调用新Promise的resolve函数
+              result instanceof Promise ? result.then(resolve, reject) : resolve(result)
+            })
+          } catch(e) {
+            reject(e)
+          }
+        })
+        this.onRejectedCallback.push(() => {
+          try {
+            setTimeout(() => {
+              const result = onRejected(_self.reason)
+              // 分两种情况：
+              // 1. 回调函数返回值是Promise，执行then操作
+              // 2. 如果不是Promise，调用新Promise的resolve函数
+              result instanceof Promise ? result.then(resolve, reject) : reject(result)
+            })
+          } catch(e) {
+            reject(e)
+          }
+        })
+      }
+
+      // FULFILLED
+      if(this.status === FULFILLED) {
+        setTimeout(() => {
+          try {
+            const result = onFulfilled(this.value)
+            result instanceof Promise ? result.then(resolve, reject) : resolve(result)
+          } catch(e) {
+            reject(e)
+          }
+        })
+      }
+
+       // REJECTED
+      if(this.status === REJECTED) {
+        setTimeout(() => {
+          try {
+            const result = onRejected(this.reason)
+            result instanceof Promise ? result.then(resolve, reject) : reject(result)
+          } catch(e) {
+            reject(e)
+          }
+        })
+      }
+
+    })
+  }
+
+
 }
-
-
-module.exports = Promise
-
-
-
-
-
-
-
 
 
 
