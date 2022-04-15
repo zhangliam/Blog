@@ -22,14 +22,14 @@ class EventEmitter {
     }
   }
 
-  emit(name, once = false) {
+  emit(name, once = false, ...args) {
     if(this.cache[name]) {
       // 创建副本，如果回调函数内继续注册相同事件，会造成死循环
-      const tasks = this.cache[name].slice()
-      for(let fn of tasks) {
-        fn()
+      let tasks = this.cache[name].slice()
+      for (let fn of tasks) {
+        fn(...args)
       }
-      if(once) {
+      if (once) {
         delete this.cache[name]
       }
     }

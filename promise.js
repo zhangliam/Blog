@@ -166,10 +166,10 @@ class Promise {
     if(value instanceof Promise) {
       // 如果是Promise实例，直接返回
       return value
-    } else {
-      // 如果不是Promise实例，返回一个新的Promise对象，状态为FULFILLED
-      return new Promise((resolve, reject) => resolve(value))
-    }
+    } 
+
+    // 如果不是Promise实例，返回一个新的Promise对象，状态为FULFILLED
+    return new Promise((resolve, reject) => resolve(value))
   }
 
   // Promise.reject也会返回一个Promise实例，状态为REJECTED。
@@ -194,7 +194,7 @@ class Promise {
         Promise.resolve(promiseAry[i]).then( val => {
           values[i] = val
           count++
-          if(count === len) resolve(values)
+          count === len && resolve(values)
         },
         error => reject(error)
       )}
