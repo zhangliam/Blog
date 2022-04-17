@@ -42,7 +42,6 @@ function Stack() {
 
 // 转换二进制
 function devideBy2(decNumber) {
-  
   let binaryString = ''
   let stack = new Stack()
 
@@ -57,7 +56,6 @@ function devideBy2(decNumber) {
   }
 
   return binaryString
-
 }
 
 
