@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+
+<script type="text/javascript">
+
+  // 链表结构辅助
+  function LinkedList() {
+    
+    var length = 0
+    var head = null
+
+    var Node = function(element) {
+      this.element = element
+      this.next = null
+    }
+
+    this.isEmpty = () => {
+      return length == 0
+    }
+
+    this.toString = () => {
+      var string = ''
+      var current = head
+
+      while(current) {
+        string += current.element + ' '
+        current = current.next
+      }
+
+      return string
+    }
+
+    this.append = (element) => {
+      var current
+      var node = new Node(element)
+
+      if(head === null) {
+        head = node
+      } else {  
+        current = head
+        // 循环列表, 直到找到最后一项
+        while(current.next) {
+          current = current.next
+        }
+        // 找到最后一项, 将其next赋值为node, 建立连接
+        current.next = node
+      }
+      // 更新列表长度
+      length++
+    }
+
+
+    this.indexOf = element => {
+      var index = -1
+      var current = head
+
+      while(current) {
+        if(element === current.element) {
+          return index
+        }
+        index++
+        current = current.next
+      }
+
+      return -1
+    }
+
+
+    this.removeAt = (position) => {
+      if(position > -1 && position < length) {
+        var current = head
+        var previous
+        var index = 0
+
+        // 移除第一项
+        if(position === 0) {
+          head = current.next
+        } 
+
+        if(position > 0) {
+          while(index++ < position) {
+            previous = current
+            current = current.next
+          }
+          // 将previous & current下一项链接起来, 跳过current从而移除它
+          previous.next = current.next
+        }
+
+        length--
+        return current.element
+      }
+
+      return null
+    }
+
+
+    this.remove = element => {
+      var index = this.indexOf(element)
+      return this.removeAt(index)
+    }
+
+
+    this.insert = (position, element) => {
+      if(position > -1 && position < length) {
+        var previous
+        var index = 0
+        var current = head
+        var node = new Node(elemsent)
+
+        // 第一个位置添加
+        if(position === 0) {
+          head = node
+          node.next = current
+        } 
+
+        if(position > 0) {
+          while(index ++ < position) {
+            previous = current
+            current = current.next
+          }
+          node.next = current
+          previous.next = node
+        }
+        // 更新列表长度
+        length++
+        return true
+      }
+      return false
+    }
+
+  } 
+
+
+  /*
+
+    散列表: Dictionary类一种散列表实现方式
+    散列算法的作用是尽可能快在数据结构中找到一个值, 给定一个键值, 返回值在表中地址
+
+  */
+  
+  function HashTable() {
+
+    var table = []
+
+    // 最常见的散列函数 "lose lose"散列函数, 方法是简单将每个键值中的每个字母ASCII值相加
+    var loseloseHashCode = key => {
+      var hash = 0
+      for(var i=0; i<key.length; i++) {
+        hash += key.charCodeAt(i)
+      }
+      // 为了得到较小的值, 使用hash值和一个任意数做除法的余数
+      return hash % 37
+    }
+
+
+    // 分离链接辅助类
+    var ValuePair = function(key, value) {
+      this.key = key
+      this.value = value
+
+      this.toString = () => `[${ this.key } - ${ this.value }]`
+    }
+
+    // this.put = (key, value) => {
+    //   var position = loseloseHashCode(key)
+    //   console.log(position + '-' + key)
+    //   table[position] = value
+    // }
+
+
+    // 分离链接改写put方法
+    this.put = (key, value) => {
+      var target = new ValuePair(key, value)
+      var position = loseloseHashCode(key)
+
+      if(table[position] == undefined) {
+        table[position] = new LinkedList()
+      }
+
+      table[position].append(target)
+    }
+
+    // this.get = key => {
+    //   return table[loseloseHashCode(key)]
+    // }
+
+    // 分离链接改写get方法
+    this.get = key => {
+      var position = loseloseHashCode(key)
+
+      if(table[position] !== undefined) {
+        // 遍历链表寻找键/值
+        var current = table[position].getHead()
+        while(current.next) {
+          if(current.element.key === key) {
+            return current.element.value
+          }
+          current = current.next
+        }
+
+        // 检查元素在链表第一个或者最后一个节点的情况
+        if(current.element.key === key) {
+          return current.element.value
+        }
+      }
+
+      return undefined
+    }
+
+
+    // this.remove = key => {
+    //   table[loseloseHashCode(key)] = undefined
+    // }
+
+    // 分离链接改写remove方法
+    this.remove = key => {
+      var position = loseloseHashCode(key)
+
+      if(table[position] !=== undefined) {
+        var current = table[position].getHead()
+        while(current.next) {
+          if(current.element.key === key) {
+            table[position].remove(current.element)
+            if(table[position].isEmpty()) {
+              table[position] == undefined
+            }
+            return true
+          }
+          current = current.next
+        }
+
+        // 检查是否为第一或最后一个元素
+        if(current.element.key === key) {
+          table[position].remove(current.element)
+          if(table[position].isEmpty()) {
+            table[position] == undefined
+          }
+          return true
+        }
+      }
+      return false
+    }
+
+
+    this.print = () => {
+      for(var i=0; i<table.length; i++) {
+        if(table[i] !== undefined) {
+          console.log(i + ': ' + table[i])
+        }
+      }
+    }
+
+  }
+
+
+  /*
+    
+    执行put方法打印出两个元素key值相等
+    16 - Tyrion
+    16 - Aaron
+
+    执行print方法打印重复申明后者覆盖前者
+    16: aaron@email.com
+
+    使用一个数据结构的目的显然不是丢失这些数据, 而是通过某些方法去保存
+    处理冲突覆盖有几种方法: 
+    1. 分离链接 - 给散列表每个位置创建一个链表将元素存储其中
+    2. 线性探查 - 给表中某个位置加入一个新元素时候, 如索引为index位置已占据, 尝试index+1位置, 如index+1位置也被占据, 则尝试index+2位置, 以此类推
+    3. 双散列法*
+
+  */
+  var hash = new HashTable(); 
+  hash.put('Gandalf', 'gandalf@email.com'); 
+  hash.put('John', 'johnsnow@email.com'); 
+  hash.put('Tyrion', 'tyrion@email.com'); 
+  hash.put('Aaron', 'aaron@email.com');
+
+
+
+
+
+
+</script>
+</body>
+</html>

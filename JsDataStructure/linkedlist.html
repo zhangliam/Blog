@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+
+<script type="text/javascript">
+/*
+
+  链表: 存储有序的元素集合, 但不同于数组, 链表中的元素在内存中并不是连续放置的
+  每个元素由一个存储元素本身的节点和一个指向下一个元素的引用(也称指针或链接)组成
+
+*/ 
+
+function LinkedList() {
+    
+  var length = 0
+  var head = null
+
+  var Node = function(element) {
+    this.element = element
+    this.next = null
+  }
+
+  this.isEmpty = () => {
+    return length == 0
+  }
+
+  this.toString = () => {
+    var string = ''
+    var current = head
+
+    while(current) {
+      string += current.element + ' '
+      current = current.next
+    }
+
+    return string
+  }
+
+  this.append = (element) => {
+    var current
+    var node = new Node(element)
+
+    if(head === null) {
+      head = node
+    } else {  
+      current = head
+      // 循环列表, 直到找到最后一项
+      while(current.next) {
+        current = current.next
+      }
+      // 找到最后一项, 将其next赋值为node, 建立连接
+      current.next = node
+    }
+    // 更新列表长度
+    length++
+  }
+
+
+  this.indexOf = element => {
+    var index = -1
+    var current = head
+
+    while(current) {
+      if(element === current.element) {
+        return index
+      }
+      index++
+      current = current.next
+    }
+
+    return -1
+  }
+
+
+  this.removeAt = (position) => {
+    if(position > -1 && position < length) {
+      var current = head
+      var previous
+      var index = 0
+
+      // 移除第一项
+      if(position === 0) {
+        head = current.next
+      } 
+
+      if(position > 0) {
+        while(index++ < position) {
+          previous = current
+          current = current.next
+        }
+        // 将previous & current下一项链接起来, 跳过current从而移除它
+        previous.next = current.next
+      }
+
+      length--
+      return current.element
+    }
+
+    return null
+  }
+
+
+  this.remove = element => {
+    var index = this.indexOf(element)
+    return this.removeAt(index)
+  }
+
+
+  this.insert = (position, element) => {
+    if(position > -1 && position < length) {
+      var previous
+      var index = 0
+      var current = head
+      var node = new Node(elemsent)
+
+      // 第一个位置添加
+      if(position === 0) {
+        head = node
+        node.next = current
+      } 
+
+      if(position > 0) {
+        while(index ++ < position) {
+          previous = current
+          current = current.next
+        }
+        node.next = current
+        previous.next = node
+      }
+      // 更新列表长度
+      length++
+      return true
+    }
+    return false
+  }
+
+
+} 
+
+
+var list = new LinkedList()
+list.append(0)
+list.append(5)
+list.append(10)
+list.append(15)
+
+console.log(list.toString())
+
+
+</script>
+</body>
+</html>
+
