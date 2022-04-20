@@ -165,6 +165,8 @@
       this.toString = () => `[${ this.key } - ${ this.value }]`
     }
 
+
+
     // this.put = (key, value) => {
     //   var position = loseloseHashCode(key)
     //   console.log(position + '-' + key)
@@ -183,6 +185,26 @@
 
       table[position].append(target)
     }
+
+
+    // 线性探查改写put方法
+    this.put = (key, value) => {
+      var position = loseloseHashCode(key)
+
+      if(table[position] == undefined) {
+        table[position] = new ValuePair(key, value)
+        return
+      }
+
+      if(table[position]) {
+        var index = ++position
+        while(table[index] !== undefined) {
+          index++
+        }
+        table[index] = new ValuePair(key, value)
+      }
+    }
+
 
     // this.get = key => {
     //   return table[loseloseHashCode(key)]
@@ -209,6 +231,33 @@
       }
 
       return undefined
+    }
+
+
+    // 线性探查改写get方法
+    this.get = key => {
+      var position = loseloseHashCode(key)
+
+      if(table[position] !== undefined) {
+
+        if(table[position].key === key) {
+          return table[position].value
+        }
+
+        if(table[position].key !== key) {
+          var index = ++position
+          while(table[index] === undefined || table[index].key !== key) {
+            index++
+          }
+          if(table[index].key === key) {
+            return table[index].value
+          }
+        }
+
+      }
+
+      return undefined
+
     }
 
 
@@ -281,7 +330,17 @@
 
 
 
+  // 更好的散列函数
+  var djb2HashCode = key => {
+    // 常用质数
+    var hash = 5381 
+    for(var i =0; i<key.length; i++) {
+      hash = hash * 33 + key.charCodeAt(i)
+    }
 
+    // 取余数(大小限制1000)
+    return hash % 1013
+  }
 
 
 </script>
