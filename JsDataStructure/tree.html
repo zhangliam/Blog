@@ -45,6 +45,107 @@
       }
     }
 
+    var preOrderTraverseNode = (node, callback) => {
+      if(node !== null) {
+        callback(node.key)
+        inOrderTraverseNode(node.left, callback)
+        inOrderTraverseNode(node.right, callback)
+      }
+    }    
+
+    var postOrderTraverseNode = (node, callback) => {
+      if(node !== null) {
+        inOrderTraverseNode(node.left, callback)
+        inOrderTraverseNode(node.right, callback)
+        callback(node.key)
+      }
+    }    
+
+    var minNode = node => {
+      if(node) {
+        // 最大值同理node.right即可
+        while(node && node.left !== null) {
+          node = node.left
+        } 
+        return node.key
+      }
+      return null
+    }
+
+    /*
+
+    在开始算法之前，先要验证作为参数传入的node是否合法（不是null）。如果是null的话，
+    说明要找的键没有找到，返回false。
+    如果传入的节点不是null，需要继续验证。如果要找的键比当前的节点小（行{3}），那么
+    继续在左侧的子树上搜索（行{4}）。如果要找的键比当前的节点大，那么就从右侧子节点开始
+    继续搜索（行{6}），否则就说明要找的键和当前节点的键相等，就返回true来表示找到了这个
+    键（行{7}）。
+
+    */
+
+    var searchNode = (node, key) => {
+      if(node === null) {
+        return false
+      }
+
+      if(key < node.key) { // {3}
+        return searchNode(node.left, key) // {4}
+      }
+
+      if(key > node.key) {
+        return searchNode(node.right, key) // {6}
+      }
+
+      return true // {7}
+    }
+
+
+
+    var removeNode = (node, key) => {
+      if(node === null) {
+        return null
+      }
+          //8        7
+          //8        9
+          //8        8
+      if(key < node.key) {
+        node.left = removeNode(node.left, key)
+        return node
+      }
+          //8       7
+          //8       9
+          //8       8
+      if(key > node.key) {
+        node.right = removeNode(node.right, key)
+        return node
+      }
+
+      /* 键key == node.key情况 */
+
+      // 情况1 => 只有一个叶节点
+      if(node.left === null && node.right === null) {
+        node = null
+        return node
+      }
+
+      // 情况2 => 只有一个子节点情况
+      if(node.left === null) {
+        node = node.right
+        return node
+      } else if(node.right == null) {
+        node = node.left
+        return node
+      }
+
+      // 情况3 => 有两个子节点情况
+      var aux = findMinNode(node.right)
+      node.key = aux.key
+      node.right = removeNode(node.right, aux.key)
+      return node
+
+    }
+
+
     this.insert = key => {
       var newNode = new Node(key)
       if(root === null) {
@@ -54,9 +155,34 @@
       }
     }
 
-    // 中序遍历: 上行s顺序访问BST所有节点的遍历方式, 也就是以从最小到最大的顺序访问所有节点(中序遍历的一种应用就是对树进行排序操作).
+    // 中序遍历: 上行顺序访问BST所有节点的遍历方式, 也就是以从最小到最大的顺序访问所有节点(中序遍历的一种应用就是对树进行排序操作).
     this.inOrderTraverse = callback => {
       inOrderTraverseNode(root, callback)
+    }
+
+    //先序遍历: 是以优先于后代节点的顺序访问每个节点的, 先序遍历的一种应用是打印一个结构化的文档.
+    this.preOrderTraverse = callback => {
+      preOrderTraverseNode(root, callback)
+    }
+
+    // 后序遍历则是先访问节点的后代节点,再访问节点本身。后序遍历的一种应用是计算一个目录和它的子目录中所有文件所占空间的大小.
+    this.postOrderTraverse = callback => {
+      postOrderTraverseNode(root, callback)
+    }
+
+    // 查询最小值
+    this.min = () => {
+      return minNode(root)
+    }
+
+    // 查询特定值
+    this.search = key => {
+      return searchNode(root, key)
+    }
+
+    // 移除特定值
+    this.move = key => {
+      root = removeNode(root, key)
     }
 
 
