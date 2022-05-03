@@ -57,7 +57,45 @@ var proxyImage = (() => {
 proxyImage.setSrc('http://img.qq.com/music/01.jpg')
 
 
+// 缓存代理: 大致思路同高性能JS中04章算法与流程控制缓存唯一key来存储返回作其他作用, 不作赘述. 
+var mult = function() {
+	var a = 1
+	for(var i = 0, len = arguments.length; i < len; i++) {
+		a *= arguments[i]
+	}
+	return a
+}
+
+var plus = function() {
+	var a = 0
+	for(var i = 0, len = arguments.length; i < len; i++) {
+		a += arguments[i]
+	}
+	return a
+}
+
+
+var createProxyFactory = function(fn) {
+	var cache = {}
+	return function() {
+		var args = Array.prototype.join.call(arguments, ',')
+		if(args in cache) {
+			return cache[args]
+		}
+		return cache[args] = fn.apply(this, arguments)
+	}
+}
+
+var proxyMult = createProxyFactory(mult)
+var proxyPlus = createProxyFactory(plus)
+
+console.log(proxyPlus(1,2,3,4), proxyMult(1,2,3,4))
+
+
+
 /* 
+
+
 
 	为了说明代理的意义, 我们引入一个面对对象设计的原则 - 单一职责原则
 
@@ -74,8 +112,15 @@ proxyImage.setSrc('http://img.qq.com/music/01.jpg')
 	实际上, 我们只需要给img设置src，预加载只是锦上添花，如果能把预加载放在另一个对象里最好，这个时候代理模式就派上用场了，
 	代理负责加载图片，预记载完毕后把请求重新交给本体myImage
 
-	纵观改写, 我们没有改动myImage接口, 但是通过代理对象，给系统添加了新的行为，只是符合开放-闭合原则的，img设置src和预加载分别隔离在
+	纵观改写, 我们没有改动myImage接口, 但是通过代理对象，给系统添加了新的行为，是符合开放-闭合原则的，img设置src和预加载分别隔离在
 	两个对象里，它们各自变化而不影响对方. 后续如无需懒加载, 只需改成本体即可
+
+
+	
+	代理模式里还有很多小分类, JS中常用的是虚拟代理(先设置cache, 真正执行启用)&缓存代理, 编写业务代码无需预先考虑是否使用代理模式, 
+	当真正发现不方便访问某个对象再使用代理不迟.
+
+
 
 */
 
