@@ -47,6 +47,7 @@ const task2 = () => { console.log('task2'); }
 eventBus.on('task', task1)
 eventBus.on('task', task2)
 eventBus.off('task', task1)
+
 setTimeout(() => {
   eventBus.emit('task') // task2
 }, 1000)
