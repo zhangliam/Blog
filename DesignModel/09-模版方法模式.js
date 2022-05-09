@@ -38,6 +38,10 @@ var Beverage = function(param) {
 		brew()
 		pourInCup()
 		addCondiments()
+		// 挂钩返回true则执行, 模拟钩子行为
+		// if(param.customerHandle) {
+		// 	addCondiments()
+		// }
 	}
 
 	return F

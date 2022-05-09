@@ -131,14 +131,74 @@ light.init()
 		2. 避免context无限膨胀, 状态和逻辑分布在状态类中, 也去掉context中原本过多的条件分支
 		3. 用对象替代字符串来记录当前状态, 清晰明了
 		4. context中请求动作和状态类中封装的行为独立变化而不受影响
+		缺点也是会定义许多状态类, 系统会增加不少对象, 逻辑分散在状态类中, 虽避免了条件分支但也造成逻辑分散问题.	
 
-	缺点也是会定义许多状态类, 系统会增加不少对象, 逻辑分散在状态类中, 虽避免了条件分支但也造成逻辑分散问题.	
 
 	状态模式性能优化点: 
 		1. 合理控制state对象创建和销毁
 		2. context对象可以共享一个state对象, 享元模式应用场景之一
 
+
+	状态模式 VS 策略模式
+		同: 都有上下文, 策略或者状态类, 上下文把请求委托这些类来执行
+		异: 策略模式中各个策略类之间是平等又平行的, 它们没有关联; 状态模式中, 状态和状态的行为是提前封装好的, 状态之间切换也早就规定完成,
+		"改变行为"这件事情发生在状态模式内部.
+
 */
+
+
+// 状态机优化
+
+var delegate = function(client, delegation) {
+	return {
+		buttonWasPressed() {  // 将客户的操作委托给delegation对象
+			return delegation.buttonWasPressed.apply(client, arguments)
+		}
+	}
+}
+
+var FSM = {
+	off: {
+		buttonWasPressed() {
+			console.log('关灯')
+			this.button.innerHTML = '下一次我是开灯'
+			this.currState = this.onState
+		}
+	},
+	on: {
+		buttonWasPressed() {
+			console.log('开灯')
+			this.button.innerHTML = '下一次我是关灯'
+			this.currState = this.offState
+		}
+	}
+}
+
+var Light = function() {
+	this.offState = delegate(this, FSM.off)
+	this.onState = delegate(this, FSM.on)
+	this.currState = this.offState  // 设置初始状态为关闭状态
+	this.button = null
+}
+
+Light.prototype.init = function() {
+	var __self = this
+	var button = document.createElement('button')
+	button.innerHTML = '已关灯'
+
+	this.button = document.body.appendChild(button)
+	
+	this.button.onclick = function() {
+		__self.currState.buttonWasPressed()
+	}
+}
+
+var light = new Light()
+light.init()
+
+
+
+
 
 
 
