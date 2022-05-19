@@ -1,7 +1,7 @@
 /*
 
   
-  -- TCP/IP协议族按层次分为: 应用层, 传输层，网络层，数据链路层
+  -- TCP/IP协议族按层次分为: 应用层, 传输层, 网络层, 数据链路层
 
     应用层 - 决定了向用户提供应用服务时通信的活动(FTP: 文件传输协议, DNS: 域名系统, HTTP)
       DNS协议通过域名查找IP协议, 或逆向通过IP查域名
@@ -34,7 +34,7 @@
       301 - Moved Permanently - 永久重定向
       302 - Found - 临时重定向
       303 - See Other - 请求资源存在另一个URL, 使用GET方法定向获取请求资源
-      *304(重定向无关) - Not Modified - 说明无需再次传输请求的内容，也就是说可以使用缓存的内容。这通常是在一些安全的方法（safe），例如GET 或HEAD 或在请求中附带了头部信息： If-None-Match 或If-Modified-Since。
+      *304(重定向无关) - Not Modified - 说明无需再次传输请求的内容, 也就是说可以使用缓存的内容. 这通常是在一些安全的方法（safe）, 例如GET 或HEAD 或在请求中附带了头部信息： If-None-Match 或If-Modified-Since. 
       307 - Temporary Redirect - 临时重定向302相同(按浏览器标准POST不会变GET)
 
       400 - Bad Request - 请求报文语法错误
