@@ -15,6 +15,10 @@ class EventEmitter {
   off(name, fn) {
     const tasks = this.cache[name]
     if(tasks) {
+      // findIndex()方法返回数组中满足提供的测试函数的第一个元素的索引. 若没有找到对应元素则返回-1.
+      // const array1 = [5, 12, 8, 130, 44];
+      // const isLargeNumber = (element) => element > 13;
+      // console.log(array1.findIndex(isLargeNumber));
       const index = tasks.findIndex( f => f === fn || f.callback === fn )
       if(index >= 0) {
         tasks.splice(index, 1)
