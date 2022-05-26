@@ -1,23 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title></title>
-</head>
-<body>
 
-  <div id="subTree">
-    <form>
-        <input type="text" name="" value="">
-        <input type="text" name="">
-        <input type="text" name="">
-        <input type="text" name="">
-    </form>
-    <span>Span</span>
-    <span>Span</span>
-  </div>
-
-</body>
-<script type="text/javascript">
 
   function MinCoinChange(coins) {
 
@@ -90,7 +71,3 @@
   }
   forDOM(root);
 
-
-
-</script>
-</html>
