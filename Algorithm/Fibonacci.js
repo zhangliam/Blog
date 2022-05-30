@@ -16,7 +16,7 @@
       }
 
       let min = [], newMin, newAmount
-      
+
       for(let i = 0; i < _coins.length; i++) {
         let coin = _coins[i]
         let newAmount = amount - coin
@@ -28,7 +28,7 @@
           newAmount >= 0 &&
           (newMin.length < min.length - 1 || !min.length) &&
           (newMin.length || !newAmount)
-        ){
+        ) {
           min = [coin].concat(newMin)
           console.log(`${newMin} new Min ${min} for ${amount}`)
         }
@@ -39,7 +39,7 @@
   }
 
 
-  type = [1, 3, 4], total => 6
+  // type = [1, 3, 4], total => 6
 
 
   /* 贪心算法 */

@@ -44,33 +44,6 @@
   }
 
 
-  function binarySearch(item) {
-    var _ary = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-    var low = 0
-    var high = _ary.length - 1
-    var mid, element
-
-    while(low <= high) {
-      mid = Math.floor((low + high)/ 2)
-      element = _ary[mid]
-
-      if(element > item) {
-        high = mid - 1
-        continue
-      }
-
-      if(element < item) {
-        low = mid + 1
-        continue
-      }
-
-      return mid
-    }
-
-    return -1
-  }
-
 
 
 </script>
