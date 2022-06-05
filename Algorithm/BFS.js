@@ -346,10 +346,12 @@ graph.addEdge('E', 'I')
 // 返回源顶点到其他顶点距离 & 前溯点数组
 var shortestPathA = graph.BFS(myVertices[0], myVertices)
 console.log(shortestPathA)
+
+// myVertices: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
 // console.log(graph.BFS(myVertices[0], myVertices))
+
 // distances: [A: 0, B: 1, C: 1, D: 1, E: 2, F: 2, G: 2, H: 2 , I: 3]
 // predecessors: [A: null, B: "A", C: "A", D: "A", E: "B", F: "B", G:"C", H: "D", I: "E"]
-// myVertices: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
 
 
 // 打印源顶点A到其他顶点最短路径

@@ -136,7 +136,7 @@ function Graph() {
 
     d[u] = ++time
     var neighbors = adjList.get(u)
-    for(var i = 0; i< neighbors.length; i++) {
+    for(var i = 0; i < neighbors.length; i++) {
       var w = neighbors[i]
       if(color[w] === 'white') {
         p[w] = u
