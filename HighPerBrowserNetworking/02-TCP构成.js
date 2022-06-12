@@ -55,10 +55,13 @@
       2. 确保cwnd大小为10(增大TCP的初始拥塞窗口)
       3. 禁用空闲后的慢启动
       4. 确保启动窗口缩放(RFC1323)
+        窗口缩放 - https://cloud.tencent.com/developer/article/1375814
       5. 减少传输冗余数据
       6. 压缩传输数据
       7. 服务器放在离用户近的地方减少往返时间
       8. 尽最大可能重用已经建立的TCP连接
+
+      https://zhuanlan.zhihu.com/p/170582219
 
 
 
