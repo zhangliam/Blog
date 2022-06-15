@@ -34,23 +34,50 @@ do {
 
 // Duff's Device(达夫设备模式) - 优化双循环 => 取消switch语句, 将余数和主循环分开
 
-var i = items.length % 8 
-while(i--) {
-  process(items[i--])
+// 有点迷不懂...
+// var i = items.length % 8 
+// while(i--) {
+//   process(items[i--])
+// }
+
+// i = Math.floor(items.length / 8) 
+// while(i) {
+//   process(items[i--])
+//   process(items[i--])
+//   process(items[i--])
+//   process(items[i--])
+//   process(items[i--])
+//   process(items[i--])
+//   process(items[i--])
+//   process(items[i--])
+// } 
+
+
+var items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+var iterations = items.length % 8;
+var i = items.length - 1;
+
+while(iterations) {
+  process(i, items[i--], ' while: 1');
+  iterations--;
 }
 
-i = Math.floor(items.length / 8) 
-while(i) {
-  process(items[i--])
-  process(items[i--])
-  process(items[i--])
-  process(items[i--])
-  process(items[i--])
-  process(items[i--])
-  process(items[i--])
-  process(items[i--])
-} 
+iterations = Math.floor(items.length / 8);
+while(iterations) {
+  process(i, items[i--], ' while: 2');
+  process(i, items[i--], ' while: 2');
+  process(i, items[i--], ' while: 2');
+  process(i, items[i--], ' while: 2');
+  process(i, items[i--], ' while: 2');
+  process(i, items[i--], ' while: 2');
+  process(i, items[i--], ' while: 2');
+  process(i, items[i--], ' while: 2');
+  iterations--;
+}
 
+function process(index, value, loop) {
+  console.log('index: ', index, ' value: ', value, loop);
+}
 
 
 // 递归模式(合并排序) & 阶乘缓存值, 避免重复运算
