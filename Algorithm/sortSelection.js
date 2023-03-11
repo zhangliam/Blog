@@ -51,3 +51,38 @@ function ArrayList() {
 
 }
 
+
+// 统计目标字符串每个字符出现的次数
+var teststr = 'afffwwrwfwqeeqwerqwerghewj'
+var getCharactorMaps = () => teststr.split('').reduce( (a,b) => (a[b]++ || (a[b] = 1), a), {})
+
+getCharactorMaps(teststr)
+
+
+/* 
+
+  贪心算法
+  输入金额面值 => 输入目标金额 => 输出匹配组合面值
+
+ */
+function MinCoinChange(coins) { 
+  var coins = coins
+  this.makeChange = function(amount) { 
+    var change = [], total = 0
+
+    for (var i = coins.length; i >= 0; i--){ 
+      var coin = coins[i]
+      while (total + coin <= amount) { 
+        change.push(coin)
+        total += coin
+      } 
+    } 
+
+    return change
+  } 
+}
+
+let lovechelsea = new MinCoinChange([1,3,4])
+console.log(lovechelsea.makeChange(6))
+
+
